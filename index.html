@@ -62,11 +62,11 @@ tr:nth-child(even) td { background:#F5F8FD; }
   <div class="kpis" id="kpis"></div>
   <div class="card"><h3>近 7 日趋势</h3><div id="ch-trend" class="chart"></div></div>
   <div class="card"><h3>集团月度订单销量</h3><div id="ch-group" class="chart"></div></div>
-  <div class="card"><h3>大唐EV 订单进度层级</h3><div class="table-wrap" id="t-datang"></div></div>
+  <div class="card"><h3>大唐EV 订单进度</h3><div class="table-wrap" id="t-datang"></div></div>
 </section>
 <section id="v-订单" class="view"><div class="card"><h3>订单 · 月度对比</h3><div class="table-wrap" id="t-orders-m"></div></div><div class="card"><h3>订单 · 周度对比</h3><div class="table-wrap" id="t-orders-w"></div></div><div class="card"><h3>订单车系分布</h3><div id="ch-series-o" class="chart"></div></div></section>
 <section id="v-销量" class="view"><div class="card"><h3>销量 · 月度对比</h3><div class="table-wrap" id="t-sales-m"></div></div><div class="card"><h3>销量 · 周度对比</h3><div class="table-wrap" id="t-sales-w"></div></div><div class="card"><h3>销量车系分布</h3><div id="ch-series-s" class="chart"></div></div></section>
-<section id="v-大唐" class="view"><div class="card"><h3>大唐EV 订单进度（层级）</h3><div class="table-wrap" id="t-datang2"></div></div></section>
+<section id="v-大唐" class="view"><div class="card"><h3>大唐EV 订单进度</h3><div class="table-wrap" id="t-datang2"></div></div></section>
 
     <section id="v-数据" class="view">
       <h3>数据说明</h3>
@@ -146,16 +146,17 @@ function renderAll() {
   renderKpis(); renderTrend(); renderGroup(); renderTables();
 }
 // 大唐表
+function lv(r) { return r["层级"] === "经销商" ? (r["归属城市"] || "经销商") : r["层级"]; }
 function datangTable(dom, data) {
   let h = "<table><tr><th>层级</th><th>名称</th><th>目标</th><th>已订</th><th>完成率</th><th>差额</th></tr>";
-  h += data.map(r => `<tr><td>${esc(r["层级"])}</td><td>${esc(r["名称"])}</td><td>${r["目标"]}</td><td>${r["已订"]}</td><td>${fmt(r["完成率"])}</td><td>${r["差额"]}</td></tr>`).join("");
+  h += data.map(r => `<tr><td>${esc(lv(r))}</td><td>${esc(r["名称"])}</td><td>${r["目标"]}</td><td>${r["已订"]}</td><td>${fmt(r["完成率"])}</td><td>${r["差额"]}</td></tr>`).join("");
   dom.innerHTML = h + "</table>";
 }
 
 // 对比表（层级：大区→区域→城市→集团→单店，每层已按本期降序）
 function cmpTable(dom, rows) {
   let h = "<table><tr><th>层级</th><th>名称</th><th>本期</th><th>同期</th><th>环比</th></tr>";
-  h += rows.map(r => `<tr><td>${esc(r["层级"])}</td><td>${esc(r["名称"])}</td><td>${r["本期"]}</td><td>${r["同期"]}</td><td>${fmt(r["qoq"], true)}</td></tr>`).join("");
+  h += rows.map(r => `<tr><td>${esc(lv(r))}</td><td>${esc(r["名称"])}</td><td>${r["本期"]}</td><td>${r["同期"]}</td><td>${fmt(r["qoq"], true)}</td></tr>`).join("");
   dom.innerHTML = h + "</table>";
 }
 // 筛选状态（按归属）
